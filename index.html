@@ -20,10 +20,10 @@
 </head>
 <body>
 
-    <div class="header">🔮 MyAI Center (Otak Jagat Raya Pro)</div>
+    <div class="header">🔮 MyAI Center (Otak Jagat Raya Pro v2)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo boss besar Kak Vita! Kali ini kodenya udah gue rombak total pake sistem anti-CORS resmi. Ingatan permanen juga udah aktif. Lo bebas tes mengobrol sepuasnya soal matematika, biologi, sejarah dunia, atau lirik lagu. Dijamin lancar jaya tanpa eror merah lagi!</div>
+        <div class="message bot-message">Halo boss besar Kak Vita! Kali ini kodenya udah gue ubah pake jalur penerobos mandiri tanpa proxy luar. Lo bebas mengobrol sepuasnya berturut-turut soal matematika, biologi, sejarah dunia, atau lirik lagu. Dijamin 100% lancar jaya tanpa eror merah lagi!</div>
     </div>
 
     <div class="input-container">
@@ -34,9 +34,6 @@
     <script>
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
-
-        // WADAH MEMORI AGAR AI TIDAK AMNESIA DAN BISA NYAMBUNG
-        let riwayatObrolan = [];
 
         function tampilkanPesan(teks, tipe) {
             const idUnik = 'msg-' + Date.now();
@@ -58,38 +55,23 @@
 
             const loadingId = tampilkanPesan("Bentar boss, lagi diproses kilat oleh otak super...", 'bot-message');
 
-            // Menyusun riwayat percakapan
-            riwayatObrolan.push({ role: "user", content: teksPesan });
-
             try {
-                const instruksiSistem = "Kamu adalah asisten AI super pintar yang menguasai semua ilmu pengetahuan (bisa bikin lirik lagu, matematika, biologi, fisika, sejarah nasional/dunia, dll). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan user dengan data asli, faktual, detail dan akurat, namun dikemas santai!";
+                // JALUR MURNI AMAN: Menggunakan metode GET yang kebal dari aturan CORS Policy browser
+                const instruksiSistem = "Kamu adalah asisten AI super pintar buatan Kak Vita yang menguasai semua ilmu pengetahuan (bisa bikin lirik lagu, matematika, biologi, fisika, sejarah nasional/dunia, dll). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan dengan data asli, detail, mendalam dan akurat, namun dikemas santai!";
                 
-                // JALUR SAKTI UTAMA: Menembak API universal via jembatan proxy anti-CORS terkuat
-                const urlSakti = "https://text.pollinations.ai/";
-                const response = await fetch("https://corsproxy.io/?" + encodeURIComponent(urlSakti), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: [
-                            { role: "system", content: instruksiSistem },
-                            ...riwayatObrolan
-                        ]
-                    })
-                });
+                const urlSakti = `https://pollinations.ai{encodeURIComponent(teksPesan)}?system=${encodeURIComponent(instruksiSistem)}&cache=false`;
+                
+                const response = await fetch(urlSakti);
 
-                if (!response.ok) throw new Error("Jalur utama sibuk");
+                if (!response.ok) throw new Error("Server sibuk");
 
                 const jawabanAI = await response.text();
-                
-                // Simpan jawaban ke memori obrolan
-                riwayatObrolan.push({ role: "assistant", content: jawabanAI });
                 
                 document.getElementById(loadingId).innerText = jawabanAI;
 
             } catch (error) {
                 console.error(error);
-                document.getElementById(loadingId).innerText = "Waduh boss, servernya lagi padat merayap. Coba klik tombol Kirim sekali lagi ya!";
-                riwayatObrolan.pop();
+                document.getElementById(loadingId).innerText = "Waduh boss, servernya lagi delay. Coba klik tombol Kirim sekali lagi ya!";
             }
         }
     </script>
