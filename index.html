@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google AI - Super Pintar Segala Bidang</title>
+    <title>AI Chatbot Kak Vita</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f0f2f5;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -16,83 +16,75 @@
         }
         .chat-container {
             width: 100%;
-            max-width: 700px;
+            max-width: 600px;
             background: #ffffff;
-            padding: 30px;
+            padding: 25px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            margin-top: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-top: 30px;
         }
-        .logo-area {
+        .header {
             text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 25px;
-            letter-spacing: -1px;
+            margin-bottom: 20px;
         }
-        .logo-g { color: #4285F4; }
-        .logo-o1 { color: #EA4335; }
-        .logo-o2 { color: #FBBC05; }
-        .logo-o3 { color: #4285F4; }
-        .logo-l { color: #34A853; }
-        .logo-e { color: #EA4335; }
-        .logo-sub {
+        .header h2 {
+            margin: 0;
+            color: #ff4757;
+            font-size: 26px;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            color: #747d8c;
             font-size: 14px;
-            color: #70757a;
-            font-weight: normal;
-            display: block;
-            margin-top: 5px;
         }
         textarea {
             width: 100%;
-            height: 120px;
-            padding: 15px;
-            border: 1px solid #dadce0;
+            height: 100px;
+            padding: 12px;
+            border: 2px solid #f1f2f6;
             border-radius: 12px;
             box-sizing: border-box;
             resize: vertical;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
-            transition: border 0.2s;
+            transition: border 0.3s;
         }
         textarea:focus {
-            border: 1px solid #4285F4;
-            box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+            border-color: #ff4757;
         }
         button {
             width: 100%;
-            background-color: #1a73e8;
+            background-color: #ff4757;
             color: white;
             padding: 14px;
-            margin-top: 15px;
+            margin-top: 10px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
             transition: background 0.2s;
         }
         button:hover {
-            background-color: #1557b0;
+            background-color: #e84118;
         }
         button:disabled {
-            background-color: #dadce0;
+            background-color: #ced6e0;
             cursor: not-allowed;
         }
         .output-box {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: #f8f9fa;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f2f6;
             border-radius: 12px;
-            border: 1px solid #dadce0;
-            min-height: 80px;
+            min-height: 60px;
             white-space: pre-line;
-            color: #202124;
+            color: #2f3542;
             line-height: 1.6;
             font-size: 15px;
         }
-        .loading-text {
-            color: #70757a;
+        .loading {
+            color: #747d8c;
             font-style: italic;
         }
     </style>
@@ -100,79 +92,85 @@
 <body>
 
 <div class="chat-container">
-    <div class="logo-area">
-        <span class="logo-g">G</span><span class="logo-o1">o</span><span class="logo-o2">o</span><span class="logo-o3">g</span><span class="logo-l">l</span><span class="logo-e">e</span><span class="logo-g">百科</span>
-        <span class="logo-sub">Super AI Penjawab Segala Ilmu & Bidang</span>
+    <div class="header">
+        <h2>AI Kak Vita ✨</h2>
+        <p>Super Cerdas Segala Ilmu & Literally Gaul Abis</p>
     </div>
     
-    <textarea id="inputPesan" placeholder="Tanyakan apa saja... (Matematika, Sejarah Islam, Kedokteran, Fisika, Biologi, Hukum, dll)"></textarea>
-    <button id="btnKirim" onclick="kirimPesan()">Tanya Super AI</button>
+    <!-- Input box dengan penanganan onkeypress agar bisa kirim lewat enter jika mau -->
+    <textarea id="inputPesan" placeholder="Tanyain apa aja... (soal matematika, biologi, sejarah, lirik lagu, bebas!)" onkeypress="handleKeyPress(event)"></textarea>
+    <button id="btnKirim" onclick="kirimPesan()">Tanya AI</button>
     
     <div id="boxJawaban" class="output-box">
-        Silakan ketik pertanyaan Anda. AI menguasai materi sekolah, universitas, sains, sejarah, dan ilmu umum lainnya.
+        Gue bisa bantu elo jawab matematika, biologi, fisika, sejarah, sampai bikin lirik lagu. Ask me anything, boss!
     </div>
 </div>
 
 <script>
+    // Fungsi pembantu agar bisa kirim pesan saat klik enter (opsional)
+    function handleKeyPress(event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault(); // Mencegah baris baru di textarea
+            kirimPesan();
+        }
+    }
+
     async function kirimPesan() {
-        const inputTeks = document.getElementById("inputPesan").value.trim();
+        const inputElement = document.getElementById("inputPesan");
+        const teksPesan = inputElement.value.trim();
         const boxJawaban = document.getElementById("boxJawaban");
         const btnKirim = document.getElementById("btnKirim");
 
-        if (!inputTeks) {
-            alert("Harap masukkan pertanyaan Anda terlebih dahulu!");
+        // Validasi input kosong
+        if (!teksPesan) {
+            alert("Ketik pertanyaan elo dulu dong, jangan kosong gitu!");
             return;
         }
 
-        // Setup UI saat memproses data
-        boxJawaban.innerHTML = '<span class="loading-text">Membuka pustaka data global, merangkai jawaban ensiklopedis...</span>';
+        // Setup UI saat loading berpikir
+        boxJawaban.innerHTML = '<span class="loading">Wait... gue lagi scrolling pustaka global dulu buat nyari jawaban terbaik...</span>';
         btnKirim.disabled = true;
-        btnKirim.innerText = "Mencari Jawaban...";
+        btnKirim.innerText = "Processing...";
 
-        // Instruksi ketat agar AI bertindak sebagai pakar ensiklopedia multi-bidang
-        const systemPrompt = "Kamu adalah AI Profesor Super Cerdas setingkat Google Search dan ChatGPT. Kamu menguasai semua bidang ilmu: matematika, sejarah dunia, sejarah islam, biologi, fisika, kimia, kedokteran, teknologi, geografi, dan materi sekolah/universitas. Jawablah pertanyaan user secara sangat mendalam, ilmiah, akurat, informatif, terstruktur, dan wajib menggunakan Bahasa Indonesia yang baku, formal, dan jelas.";
-        
+        // Doktrin Karakter AI Sesuai Request Kak Vita
+        const systemPrompt = "Kamu adalah asisten AI super pintar buatan Kak Vita yang menguasai semua ilmu pengetahuan (bisa bikin lirik lagu, matematika, biologi, fisika, sejarah nasional/dunia, dll). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan dengan data asli, detail, mendalam dan akurat, namun dikemas santai!";
+
+        // Enkripsi teks agar aman saat masuk ke dalam URL (Wajib menggunakan kapital camelCase)
+        const urlPrompt = encodeURIComponent(systemPrompt);
+        const urlPesan = encodeURIComponent(teksPesan);
+
+        // Struktur URL Pollinations AI yang legal dan benar menggunakan Backtick ( ` )
+        const apiUrl = `https://pollinations.ai{urlPesan}?system=${urlPrompt}&cache=false`;
+
         try {
-            // Menggunakan Endpoint Pollinations AI (Model Llama-3.1-405b tingkat tinggi & Gratis)
-            const apiUrl = "https://pollinations.ai";
-            
-            // Format request POST ke Pollinations AI
-            const response = await fetch(apiUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    messages: [
-                        { role: "system", content: systemPrompt },
-                        { role: "user", content: inputTeks }
-                    ],
-                    model: "openai" // Menggunakan model teks performa tinggi berbasis web
-                })
-            });
+            // Menembak endpoint API publik secara langsung
+            const response = await fetch(apiUrl);
 
             if (!response.ok) {
-                throw new Error(`Koneksi server terputus (Status: ${response.status})`);
+                throw new Error(`Server ngadat nih (Status: ${response.status})`);
             }
 
-            // Jalur ini mengembalikan teks jawaban secara langsung tanpa struktur JSON yang rumit
+            // Membaca hasil respon teks langsung dari Pollinations AI
             const jawabanAI = await response.text();
 
             if (!jawabanAI || jawabanAI.trim() === "") {
-                throw new Error("Respon yang diterima kosong.");
+                throw new Error("Respon yang diterima kosong melompong.");
             }
 
-            // Tampilkan hasil jawaban ke layar
+            // Masukkan teks ke box jawaban dan kosongkan input textarea
             boxJawaban.innerText = jawabanAI.trim();
+            inputElement.value = ""; 
 
         } catch (error) {
-            // Proteksi konsol agar tidak merah (crash), diganti dengan log peringatan
+            // Konsol diamankan menggunakan warn agar TIDAK MERAH (tidak crash)
             console.warn("Laporan Sistem:", error.message);
-            boxJawaban.innerHTML = `<span style="color: #d93025;"><b>Terjadi Gangguan Jaringan:</b> ${error.message}<br><br>Server global sedang penuh. Silakan klik tombol <b>Tanya Super AI</b> sekali lagi untuk mencoba jalur alternatif.</span>`;
+            
+            // Tampilkan pesan error yang ramah di UI
+            boxJawaban.innerHTML = `<span style="color: #ff4757;"><b>Jujurly ada kendala jaringan:</b> ${error.message}<br><br>Servernya lagi hectic banget, elo coba klik tombol <b>Tanya AI</b> sekali lagi deh boss biar gue jemput ulang jawabannya!</span>`;
         } finally {
-            // Mengaktifkan kembali tombol kirim
+            // Kembalikan tombol kirim ke status aktif semula
             btnKirim.disabled = false;
-            btnKirim.innerText = "Tanya Super AI";
+            btnKirim.innerText = "Tanya AI";
         }
     }
 </script>
