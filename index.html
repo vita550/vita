@@ -23,11 +23,11 @@
     <div class="header">🔮 MyAI Center (Otak Jagat Raya Online)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo! Selamat datang di MyAI Center. Website Anda sekarang sudah resmi online di internet. Saya adalah asisten AI yang siap membantu menjawab apa saja, mulai dari membuat lirik lagu, membantu tugas sekolah/kuliah, hingga memberikan informasi umum lainnya. Silakan sampaikan pertanyaan Anda!</div>
+        <div class="message bot-message">Halo! Selamat datang di MyAI Center. Website Anda sekarang sudah resmi online di internet. Saya adalah asisten AI yang siap membantu menjawab apa saja, mulai dari membantu tugas sekolah, hitungan matematika, hingga informasi umum lainnya. Silakan sampaikan pertanyaan Anda!</div>
     </div>
 
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="Tulis pertanyaan, tugas sekolah, lirik lagu, atau apa saja di sini..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+        <input type="text" id="userInput" placeholder="Tulis pertanyaan, tugas sekolah, atau hitungan matematika di sini..." onkeypress="if(event.key === 'Enter') kirimPesan()">
         <button onclick="kirimPesan()">Kirim</button>
     </div>
 
@@ -56,29 +56,22 @@
             const loadingId = tampilkanPesan("Mohon tunggu sebentar, saya sedang memproses pertanyaan Anda...", 'bot-message');
 
             try {
-                const response = await fetch("https://pollinations.ai", {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: "openai",
-                        messages: [
-                            { role: "system", content: "Anda adalah asisten AI super cerdas yang menguasai berbagai bidang pengetahuan. Jawablah semua pertanyaan pengguna menggunakan Bahasa Indonesia yang baik, benar, sopan, informatif, dan mudah dipahami oleh siapa saja." },
-                            { role: "user", content: teksPesan }
-                        ]
-                    })
-                });
+                // Menggunakan metode GET URL resmi Pollinations untuk bypass kendala CORS sepenuhnya
+                const instruksiSistem = "Jawablah menggunakan Bahasa Indonesia yang baik, benar, sopan, informatif, dan mudah dipahami.";
+                const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?system=${encodeURIComponent(instruksiSistem)}&model=openai`;
+                
+                const response = await fetch(urlTujuan);
 
                 if (!response.ok) {
                     throw new Error('Respons server bermasalah');
                 }
 
-                const data = await response.json();
-                const jawabanAI = data.choices[0].message.content;
+                const jawabanAI = await response.text();
                 document.getElementById(loadingId).innerText = jawabanAI;
 
             } catch (error) {
                 console.error(error);
-                document.getElementById(loadingId).innerText = "Maaf, sistem sedang sibuk atau koneksi terputus. Silakan coba kirim ulang pertanyaan Anda beberapa saat lagi.";
+                document.getElementById(loadingId).innerText = "Maaf, sistem sedang sibuk atau koneksi terputus. Silakan coba kirim ulang beberapa saat lagi.";
             }
         }
     </script>
