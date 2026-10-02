@@ -20,20 +20,23 @@
 </head>
 <body>
 
-    <div class="header">🔮 MyAI Center (Otak Jagat Raya Online)</div>
+    <div class="header">🔮 MyAI Center (Otak Jagat Raya Online - Powered by Gemini)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo boss besar! Website ini sekarang terhubung ke kluster server AI tingkat lanjut yang bebas CORS. Saya siap menjawab SEMUA ilmu pengetahuan: Matematika tingkat lanjut, Fisika, Kimia, Biologi, Sejarah, hingga materi kuliah dan umum. Silakan uji kecerdasan saya dengan pertanyaan apa saja!</div>
+        <div class="message bot-message">Halo boss besar! Website ini sekarang ditenagai langsung oleh Google Gemini AI tingkat global. Saya menguasai seluruh bidang keilmuan: Matematika, Fisika, Kimia, Biologi, Sejarah Dunia, Ilmu Kedokteran, hingga semua materi dari TK sampai Universitas. Silakan todong saya dengan pertanyaan apa saja!</div>
     </div>
 
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="Tanya rumus kalkulus, sejarah dunia, ilmu kedokteran, bebas..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+        <input type="text" id="userInput" placeholder="Tanya rumus, sejarah dunia, materi kuliah, kedokteran, bebas..." onkeypress="if(event.key === 'Enter') kirimPesan()">
         <button onclick="kirimPesan()">Kirim</button>
     </div>
 
     <script>
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
+
+        // PENTING: Ganti teks di bawah ini dengan API Key yang Anda dapatkan dari Google AI Studio tadi!
+        const GEMINI_API_KEY = "MASUKKAN_API_KEY_GOOGLE_ANDA_DI_SINI";
 
         function tampilkanPesan(teks, tipe) {
             const idUnik = 'msg-' + Date.now();
@@ -53,43 +56,34 @@
             tampilkanPesan(teksPesan, 'user-message');
             userInput.value = "";
 
-            const loadingId = tampilkanPesan("Menghubungkan ke jaringan otak super global, mohon tunggu...", 'bot-message');
+            const loadingId = tampilkanPesan("Menghubungkan ke server pusat Google AI, mohon tunggu...", 'bot-message');
 
             try {
-                // Menggunakan model 'flux'/'llama' cluster terbaru via text gateway bebas blokir CORS 
-                const instruksiSistem = "Kamu adalah AI super cerdas setingkat Google yang menguasai matematika, sejarah, biologi, kedokteran, fisika, kimia, dan seluruh ilmu pengetahuan sekolah hingga universitas. Jawablah setiap pertanyaan secara mendalam, akurat, informatif, dan menggunakan Bahasa Indonesia yang baik dan jelas.";
+                // Endpoint resmi Google Gemini API untuk pengiriman pesan chat
+                const urlTujuan = `https://googleapis.com{GEMINI_API_KEY}`;
                 
-                const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=llama&system=${encodeURIComponent(instruksiSistem)}`;
-                
-                const response = await fetch(urlTujuan);
+                const response = await fetch(urlTujuan, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: teksPesan + " (Jawablah menggunakan Bahasa Indonesia yang sangat cerdas, mendalam, akurat, informatif, namun dikemas secara ramah dan mudah dipahami)" }]
+                        }]
+                    })
+                });
 
                 if (!response.ok) {
-                    throw new Error('Jalur utama sibuk');
+                    throw new Error('Respons Google bermasalah');
                 }
 
-                const jawabanAI = await response.text();
+                const data = await response.json();
+                const jawabanAI = data.candidates[0].content.parts[0].text;
                 
-                if (!jawabanAI || jawabanAI.trim() === "") {
-                    throw new Error('Jawaban kosong');
-                }
-
                 document.getElementById(loadingId).innerText = jawabanAI;
 
             } catch (error) {
                 console.error(error);
-                
-                // JALUR PENYELAMAT CADANGAN UTAMA (SUDAH DIUPGRADE KE KLUSTER MULTI-MODEL)
-                try {
-                    const urlCadangan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=mistral`;
-                    const resCadangan = await fetch(urlCadangan);
-                    if (resCadangan.ok) {
-                        const teksCadangan = await resCadangan.text();
-                        document.getElementById(loadingId).innerText = teksCadangan;
-                        return;
-                    }
-                } catch (errAlt) {}
-
-                document.getElementById(loadingId).innerText = "Koneksi ke superkomputer terhambat. Silakan klik tombol Kirim sekali lagi untuk mencoba jalur alternatif otomatis!";
+                document.getElementById(loadingId).innerText = "Waduh, koneksi ke Google AI terputus. Pastikan API Key Anda sudah benar atau coba klik Kirim sekali lagi!";
             }
         }
     </script>
