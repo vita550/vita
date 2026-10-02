@@ -1,8 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot Kak Vita</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            margin: 0;
+            color: #ff4757;
+            font-size: 26px;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            color: #747d8c;
+            font-size: 14px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 2px solid #f1f2f6;
+            border-radius: 12px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        textarea:focus {
+            border-color: #ff4757;
+        }
+        button {
+            width: 100%;
+            background-color: #ff4757;
+            color: white;
+            padding: 14px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #e84118;
+        }
+        button:disabled {
+            background-color: #ced6e0;
+            cursor: not-allowed;
+        }
+        .output-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f2f6;
+            border-radius: 12px;
+            min-height: 60px;
+            white-space: pre-line;
+            color: #2f3542;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        .loading {
+            color: #747d8c;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="header">
+        <h2>AI Kak Vita ✨</h2>
+        <p>Super Cerdas Segala Ilmu & Literally Gaul Abis</p>
+    </div>
+    
+    <textarea id="inputPesan" placeholder="Tanyain apa aja... (soal matematika, biologi, sejarah, lirik lagu, bebas!)" onkeypress="handleKeyPress(event)"></textarea>
+    <button id="btnKirim" onclick="kirimPesan()">Tanya AI</button>
+    
+    <div id="boxJawaban" class="output-box">
+        Gue bisa bantu elo jawab matematika, biologi, fisika, sejarah, sampai bikin lirik lagu. Ask me anything, boss!
+    </div>
+</div>
+
 <script>
-    // Fungsi pembantu agar bisa kirim pesan saat klik enter
+    // Fungsi agar tombol enter bisa langsung mengirim pertanyaan
     function handleKeyPress(event) {
         if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault(); 
+            event.preventDefault();
             kirimPesan();
         }
     }
@@ -13,13 +120,11 @@
         const boxJawaban = document.getElementById("boxJawaban");
         const btnKirim = document.getElementById("btnKirim");
 
-        // Validasi input jika kosong
         if (!teksPesan) {
             alert("Ketik pertanyaan elo dulu dong, jangan kosong gitu!");
             return;
         }
 
-        // Setup UI saat loading berpikir
         boxJawaban.innerHTML = '<span class="loading">Wait... gue lagi scrolling pustaka global dulu buat nyari jawaban terbaik...</span>';
         btnKirim.disabled = true;
         btnKirim.innerText = "Processing...";
@@ -27,51 +132,47 @@
         // Doktrin Karakter AI Jaksel buatan Kak Vita
         const systemPrompt = "Kamu adalah asisten AI super pintar buatan Kak Vita yang menguasai semua ilmu pengetahuan (bisa bikin lirik lagu, matematika, biologi, fisika, sejarah nasional/dunia, dll). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan dengan data asli, detail, mendalam dan akurat, namun dikemas santai!";
 
-        // Endpoint resmi text generator Pollinations AI
-        const apiUrl = "https://pollinations.ai";
+        // 1. Menyusun URL target asli ke Pollinations AI dengan fungsi enkripsi JavaScript yang valid
+        const urlPesan = encodeURIComponent(teksPesan);
+        const urlSystem = encodeURIComponent(systemPrompt);
+        const targetUrl = `https://pollinations.ai{urlPesan}?system=${urlSystem}&cache=false`;
+        
+        // 2. PERBAIKAN TOTAL: Dibungkus dengan domain AllOrigins proxy resmi secara hukum JavaScript menggunakan \${ }
+        const proxyUrl = `https://allorigins.win{encodeURIComponent(targetUrl)}`;
 
         try {
-            // Menggunakan metode POST dengan JSON payload agar terhindar dari typo URL
-            const response = await fetch(apiUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    messages: [
-                        { role: "system", content: systemPrompt },
-                        { role: "user", content: teksPesan }
-                    ],
-                    model: "openai", // Menggunakan model basis teks performa tinggi
-                    jsonMode: false
-                })
-            });
+            // Melakukan fetch ke alamat proxy
+            const response = await fetch(proxyUrl);
 
             if (!response.ok) {
-                throw new Error(`Server ngadat nih (Status: ${response.status})`);
+                throw new Error(`Server proxy bermasalah (Status: ${response.status})`);
             }
 
-            // Membaca hasil respon teks langsung dari server
-            const jawabanAI = await response.text();
+            // Membaca kembalian JSON dari AllOrigins
+            const dataJson = await response.json();
+            
+            // Mengambil string teks jawaban AI dari dalam properti .contents milik AllOrigins
+            const jawabanAI = dataJson.contents;
 
             if (!jawabanAI || jawabanAI.trim() === "") {
-                throw new Error("Respon yang diterima kosong melompong.");
+                throw new Error("Respon yang diterima dari AI kosong.");
             }
 
-            // Masukkan teks ke box jawaban dan kosongkan input textarea
+            // Tampilkan hasil sukses ke UI layar
             boxJawaban.innerText = jawabanAI.trim();
             inputElement.value = ""; 
 
         } catch (error) {
-            // Konsol diamankan menggunakan warn agar TIDAK MERAH di browser
+            // Menggunakan console.warn agar kalau internet ngadat, konsol Anda tetap bersih (TIDAK MERAH)
             console.warn("Laporan Sistem:", error.message);
-            
-            // Tampilkan pesan error yang ramah di UI
-            boxJawaban.innerHTML = `<span style="color: #ff4757;"><b>Jujurly ada kendala jaringan:</b> ${error.message}<br><br>Servernya lagi hectic banget, elo coba klik tombol <b>Tanya AI</b> sekali lagi deh boss biar gue jemput ulang jawabannya!</span>`;
+            boxJawaban.innerHTML = `<span style="color: #ff4757;"><b>Jujurly ada kendala jaringan:</b> ${error.message}<br><br>Server lagi rada hectic, elo coba klik tombol <b>Tanya AI</b> sekali lagi deh boss biar gue jemput ulang jawabannya!</span>`;
         } finally {
-            // Kembalikan tombol kirim ke status aktif semula
+            // Hidupkan kembali tombolnya
             btnKirim.disabled = false;
             btnKirim.innerText = "Tanya AI";
         }
     }
 </script>
+
+</body>
+</html>
