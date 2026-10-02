@@ -20,14 +20,14 @@
 </head>
 <body>
 
-    <div class="header">🔮 MyAI Center (Gemini Engine)</div>
+    <div class="header">🔮 MyAI Center (Otak Jagat Raya Online)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo boss besar! Kali ini mesin gue udah dipindahin ke server Google asli yang super kilat dan dipasang fitur ingatan permanen anti-CORS. Yuk, tes mengobrol berkali-kali, dijamin lancar jaya!</div>
+        <div class="message bot-message">Halo boss besar! Website lo udah online resmi dengan logika dua jalur profesional. Otak gue udah super jenius: tahu Matematika, Fisika, Biologi, Sejarah Dunia, dan lirik lagu sepuasnya! Mau nanya apa kita?</div>
     </div>
 
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="Tanya rumus, pelajaran, lirik lagu, sepuasnya..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+        <input type="text" id="userInput" placeholder="Tanya rumus, sejarah dunia, biologi, lirik lagu..." onkeypress="if(event.key === 'Enter') kirimPesan()">
         <button onclick="kirimPesan()">Kirim</button>
     </div>
 
@@ -35,7 +35,7 @@
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
 
-        // WADAH MEMORI UNTUK MENYIMPAN RIWAYAT PERCAKAPAN
+        // Menyimpan memori percakapan agar AI bisa nyambung diajak mengobrol berkali-kali
         let riwayatObrolan = [];
 
         function tampilkanPesan(teks, tipe) {
@@ -56,40 +56,61 @@
             tampilkanPesan(teksPesan, 'user-message');
             userInput.value = "";
 
-            const loadingId = tampilkanPesan("Bentar boss, lagi mengingat-ingat obrolan kita...", 'bot-message');
-
-            // Masukkan pertanyaan baru user ke riwayat ingatan
+            const loadingId = tampilkanPesan("Bentar boss, lagi diproses kilat...", 'bot-message');
             riwayatObrolan.push({ role: "user", parts: [{ text: teksPesan }] });
 
+            // === LINGKUP LOGIKA JALUR UTAMA & CADANGAN ANTI-ERROR ===
             try {
-                // Mantra instruksi sistem agar gaya bicaranya tetap gaul anak Jaksel
-                const instruksiSistem = "Kamu adalah asisten AI super pintar yang menguasai semua ilmu pengetahuan (bisa bikin lirik lagu, matematika, biologi, fisika, sejarah nasional/dunia, dll). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan user dengan data asli, faktual, detail dan akurat, namun dikemas santai!";
+                const instruksiSistem = "Kamu adalah AI asisten super cerdas setingkat Google dan ChatGPT yang menguasai matematika, sejarah dunia, biologi, fisika, lirik lagu, dll. Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan user secara mendalam, akurat, informatif, detail, dan dikemas santai!";
                 
-                // Menggunakan server proxy terkuat (corsproxy.io) untuk menerobos blokiran CORS browser
-                const urlGoogle = "https://googleapis.com" + atob("QUl6YVN5RHV2V0ctT2Ffd0FfRmdUeVFPaG1jUFNzOTB6Q0tYUE9v");
-                const response = await fetch("https://corsproxy.io?" + encodeURIComponent(urlGoogle), {
+                // JALUR UTAMA: Menggunakan Google Gemini yang super cepat dan bebas CORS
+                const urlUtama = "https://googleapis.com" + atob("QUl6YVN5RHV2V0ctT2Ffd0FfRmdUeVFPaG1jUFNzOTB6Q0tYUE9v");
+                const response = await fetch("https://corsproxy.io?" + encodeURIComponent(urlUtama), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [
                             { role: "user", parts: [{ text: instruksiSistem }] },
-                            ...riwayatObrolan // Kirim semua riwayat obrolan biar AI-nya ingat topik!
+                            ...riwayatObrolan
                         ]
                     })
                 });
 
+                if (!response.ok) throw new Error("Jalur utama padat");
+
                 const data = await response.json();
                 const jawabanAI = data.candidates.content.parts.text;
                 
-                // Simpan juga jawaban AI ke riwayat ingatan
                 riwayatObrolan.push({ role: "model", parts: [{ text: jawabanAI }] });
-                
                 document.getElementById(loadingId).innerText = jawabanAI;
 
             } catch (error) {
-                console.error(error);
-                document.getElementById(loadingId).innerText = "Waduh boss, sinyalnya tabrakan. Coba klik tombol Kirim sekali lagi ya!";
-                // Hapus ingatan terakhir yang gagal agar memori tidak rusak
+                console.error("Gagal pada Jalur Utama:", error.message);
+                
+                // JALUR CADANGAN: Otomatis aktif jika jalur utama di atas macet
+                try {
+                    const responseAlt = await fetch("https://pollinations.ai", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            messages: [
+                                { role: "system", content: "Kamu adalah AI super cerdas. Jawablah mendalam dengan gaya gaul Jaksel." },
+                                { role: "user", content: teksPesan }
+                            ]
+                        })
+                    });
+                    
+                    if (responseAlt.ok) {
+                        const jawabanAlt = await responseAlt.text();
+                        document.getElementById(loadingId).innerText = jawabanAlt;
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Jalur cadangan juga gagal:", e.message);
+                }
+
+                // Benteng pertahanan terakhir jika internet terputus total
+                document.getElementById(loadingId).innerText = "Waduh, koneksi sedang sangat padat. Tolong klik tombol Kirim sekali lagi untuk mencoba kembali boss!";
                 riwayatObrolan.pop();
             }
         }
