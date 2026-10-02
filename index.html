@@ -106,7 +106,6 @@
 </div>
 
 <script>
-    // Fungsi agar tombol enter bisa langsung mengirim pertanyaan
     function handleKeyPress(event) {
         if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
@@ -132,42 +131,36 @@
         // Doktrin Karakter AI Jaksel buatan Kak Vita
         const systemPrompt = "Kamu adalah asisten AI super pintar buatan Kak Vita yang menguasai semua ilmu pengetahuan (bisa bikin lirik lagu, matematika, biologi, fisika, sejarah nasional/dunia, dll). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan dengan data asli, detail, mendalam dan akurat, namun dikemas santai!";
 
-        // 1. Menyusun URL target asli ke Pollinations AI dengan fungsi enkripsi JavaScript yang valid
         const urlPesan = encodeURIComponent(teksPesan);
         const urlSystem = encodeURIComponent(systemPrompt);
+        
+        // URL Utama Pollinations AI
         const targetUrl = `https://pollinations.ai{urlPesan}?system=${urlSystem}&cache=false`;
         
-        // 2. PERBAIKAN TOTAL: Dibungkus dengan domain AllOrigins proxy resmi secara hukum JavaScript menggunakan \${ }
-        const proxyUrl = `https://allorigins.win{encodeURIComponent(targetUrl)}`;
+        // PENGAMEN KONEKSI: Menggunakan corsproxy.io yang jauh lebih kencang dibanding AllOrigins
+        const proxyUrl = `https://corsproxy.io{encodeURIComponent(targetUrl)}`;
 
         try {
-            // Melakukan fetch ke alamat proxy
             const response = await fetch(proxyUrl);
 
             if (!response.ok) {
-                throw new Error(`Server proxy bermasalah (Status: ${response.status})`);
+                throw new Error(`Koneksi terhambat (Status: ${response.status})`);
             }
 
-            // Membaca kembalian JSON dari AllOrigins
-            const dataJson = await response.json();
-            
-            // Mengambil string teks jawaban AI dari dalam properti .contents milik AllOrigins
-            const jawabanAI = dataJson.contents;
+            // Membaca teks balasan langsung dari proxy
+            const jawabanAI = await response.text();
 
             if (!jawabanAI || jawabanAI.trim() === "") {
-                throw new Error("Respon yang diterima dari AI kosong.");
+                throw new Error("Respon kosong.");
             }
 
-            // Tampilkan hasil sukses ke UI layar
             boxJawaban.innerText = jawabanAI.trim();
             inputElement.value = ""; 
 
         } catch (error) {
-            // Menggunakan console.warn agar kalau internet ngadat, konsol Anda tetap bersih (TIDAK MERAH)
             console.warn("Laporan Sistem:", error.message);
-            boxJawaban.innerHTML = `<span style="color: #ff4757;"><b>Jujurly ada kendala jaringan:</b> ${error.message}<br><br>Server lagi rada hectic, elo coba klik tombol <b>Tanya AI</b> sekali lagi deh boss biar gue jemput ulang jawabannya!</span>`;
+            boxJawaban.innerHTML = `<span style="color: #ff4757;"><b>Jujurly ada kendala jaringan:</b> ${error.message}<br><br>Tenang boss, elo coba klik tombol <b>Tanya AI</b> sekali lagi buat panggil ulang jalurnya!</span>`;
         } finally {
-            // Hidupkan kembali tombolnya
             btnKirim.disabled = false;
             btnKirim.innerText = "Tanya AI";
         }
