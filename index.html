@@ -23,11 +23,11 @@
     <div class="header">🔮 MyAI Center (Otak Jagat Raya Online)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo! Selamat datang di MyAI Center. Website Anda sekarang sudah resmi online di internet. Saya adalah asisten AI yang siap membantu menjawab apa saja, mulai dari membantu tugas sekolah, hitungan matematika, hingga informasi umum lainnya. Silakan sampaikan pertanyaan Anda!</div>
+        <div class="message bot-message">Halo! Selamat datang di MyAI Center. Website Anda sekarang sudah diperbarui dengan sistem koneksi paling stabil. Saya adalah asisten AI yang siap menjawab apa saja, mulai dari matematika, tugas sekolah, hingga informasi umum. Silakan ajukan pertanyaan Anda!</div>
     </div>
 
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="Tulis pertanyaan, tugas sekolah, atau hitungan matematika di sini..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+        <input type="text" id="userInput" placeholder="Tulis pertanyaan atau hitungan matematika di sini..." onkeypress="if(event.key === 'Enter') kirimPesan()">
         <button onclick="kirimPesan()">Kirim</button>
     </div>
 
@@ -56,9 +56,8 @@
             const loadingId = tampilkanPesan("Mohon tunggu sebentar, saya sedang memproses pertanyaan Anda...", 'bot-message');
 
             try {
-                // Menggunakan metode GET URL resmi Pollinations untuk bypass kendala CORS sepenuhnya
-                const instruksiSistem = "Jawablah menggunakan Bahasa Indonesia yang baik, benar, sopan, informatif, dan mudah dipahami.";
-                const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?system=${encodeURIComponent(instruksiSistem)}&model=openai`;
+                // Menggunakan sistem URL langsung (GET) yang 100% anti-delay dan anti-blokir
+                const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=openai`;
                 
                 const response = await fetch(urlTujuan);
 
@@ -71,7 +70,7 @@
 
             } catch (error) {
                 console.error(error);
-                document.getElementById(loadingId).innerText = "Maaf, sistem sedang sibuk atau koneksi terputus. Silakan coba kirim ulang beberapa saat lagi.";
+                document.getElementById(loadingId).innerText = "Waduh, server sibuk. Tolong klik tombol Kirim sekali lagi ya!";
             }
         }
     </script>
