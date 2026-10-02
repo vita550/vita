@@ -97,7 +97,6 @@
         <p>Super Cerdas Segala Ilmu & Literally Gaul Abis</p>
     </div>
     
-    <!-- Input box dengan penanganan onkeypress agar bisa kirim lewat enter jika mau -->
     <textarea id="inputPesan" placeholder="Tanyain apa aja... (soal matematika, biologi, sejarah, lirik lagu, bebas!)" onkeypress="handleKeyPress(event)"></textarea>
     <button id="btnKirim" onclick="kirimPesan()">Tanya AI</button>
     
@@ -107,10 +106,9 @@
 </div>
 
 <script>
-    // Fungsi pembantu agar bisa kirim pesan saat klik enter (opsional)
     function handleKeyPress(event) {
         if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault(); // Mencegah baris baru di textarea
+            event.preventDefault();
             kirimPesan();
         }
     }
@@ -121,54 +119,51 @@
         const boxJawaban = document.getElementById("boxJawaban");
         const btnKirim = document.getElementById("btnKirim");
 
-        // Validasi input kosong
         if (!teksPesan) {
             alert("Ketik pertanyaan elo dulu dong, jangan kosong gitu!");
             return;
         }
 
-        // Setup UI saat loading berpikir
         boxJawaban.innerHTML = '<span class="loading">Wait... gue lagi scrolling pustaka global dulu buat nyari jawaban terbaik...</span>';
         btnKirim.disabled = true;
         btnKirim.innerText = "Processing...";
 
-        // Doktrin Karakter AI Sesuai Request Kak Vita
+        // Doktrin Karakter AI Jaksel
         const systemPrompt = "Kamu adalah asisten AI super pintar buatan Kak Vita yang menguasai semua ilmu pengetahuan (bisa bikin lirik lagu, matematika, biologi, fisika, sejarah nasional/dunia, dll). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah pertanyaan dengan data asli, detail, mendalam dan akurat, namun dikemas santai!";
 
-        // Enkripsi teks agar aman saat masuk ke dalam URL (Wajib menggunakan kapital camelCase)
         const urlPrompt = encodeURIComponent(systemPrompt);
         const urlPesan = encodeURIComponent(teksPesan);
 
-        // Struktur URL Pollinations AI yang legal dan benar menggunakan Backtick ( ` )
-        const apiUrl = `https://pollinations.ai{urlPesan}?system=${urlPrompt}&cache=false`;
+        // 1. URL Utama Menggunakan Metode GET Resmi Pollinations
+        const targetUrl = `https://pollinations.ai{urlPesan}?system=${urlPrompt}&cache=false`;
+        
+        // 2. DIKUNCI OLEH PROXY: Membungkus URL utama agar lolos dari blokir CORS GitHub Pages
+        const proxyUrl = `https://allorigins.win{encodeURIComponent(targetUrl)}`;
 
         try {
-            // Menembak endpoint API publik secara langsung
-            const response = await fetch(apiUrl);
+            // Menembak proxy dengan metode GET (bukan POST)
+            const response = await fetch(proxyUrl);
 
             if (!response.ok) {
-                throw new Error(`Server ngadat nih (Status: ${response.status})`);
+                throw new Error(`Server proxy bermasalah (Status: ${response.status})`);
             }
 
-            // Membaca hasil respon teks langsung dari Pollinations AI
-            const jawabanAI = await response.text();
+            const dataJson = await response.json();
+            
+            // AllOrigins mengembalikan data di dalam properti .contents
+            const jawabanAI = dataJson.contents;
 
             if (!jawabanAI || jawabanAI.trim() === "") {
-                throw new Error("Respon yang diterima kosong melompong.");
+                throw new Error("Respon kosong.");
             }
 
-            // Masukkan teks ke box jawaban dan kosongkan input textarea
             boxJawaban.innerText = jawabanAI.trim();
             inputElement.value = ""; 
 
         } catch (error) {
-            // Konsol diamankan menggunakan warn agar TIDAK MERAH (tidak crash)
             console.warn("Laporan Sistem:", error.message);
-            
-            // Tampilkan pesan error yang ramah di UI
-            boxJawaban.innerHTML = `<span style="color: #ff4757;"><b>Jujurly ada kendala jaringan:</b> ${error.message}<br><br>Servernya lagi hectic banget, elo coba klik tombol <b>Tanya AI</b> sekali lagi deh boss biar gue jemput ulang jawabannya!</span>`;
+            boxJawaban.innerHTML = `<span style="color: #ff4757;"><b>Jujurly ada kendala jaringan:</b> ${error.message}<br><br>Coba klik tombol <b>Tanya AI</b> sekali lagi ya boss biar gue jemput ulang jawabannya!</span>`;
         } finally {
-            // Kembalikan tombol kirim ke status aktif semula
             btnKirim.disabled = false;
             btnKirim.innerText = "Tanya AI";
         }
