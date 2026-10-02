@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyAI Center - Otak Jagat Raya</title>
+    <title>MyAI Center - Llama 3 Super Intelligence</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #1a1a26; color: #cdd6f4; margin: 0; display: flex; flex-direction: column; height: 100vh; }
         .header { background-color: #11111b; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; border-bottom: 1px solid #313244; color: #00ffcc; }
@@ -20,23 +20,20 @@
 </head>
 <body>
 
-    <div class="header">🔮 MyAI Center (Otak Jagat Raya Online - Powered by Gemini)</div>
+    <div class="header">🔮 MyAI Center (Ditenagai Llama 3 Global)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo boss besar! Website ini sekarang ditenagai langsung oleh Google Gemini AI tingkat global. Saya menguasai seluruh bidang keilmuan: Matematika, Fisika, Kimia, Biologi, Sejarah Dunia, Ilmu Kedokteran, hingga semua materi dari TK sampai Universitas. Silakan todong saya dengan pertanyaan apa saja!</div>
+        <div class="message bot-message">Halo boss besar! Website ini sekarang resmi ditenagai oleh Kecerdasan AI Llama 3 tingkat global. Saya menguasai seluruh bidang pengetahuan: Matematika semua tingkat, Fisika, Kimia, Biologi, Kedokteran, Sejarah Dunia/Nasional, dan semua pelajaran sekolah dari TK hingga Universitas. Silakan uji pengetahuan saya dengan pertanyaan apa saja!</div>
     </div>
 
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="Tanya rumus, sejarah dunia, materi kuliah, kedokteran, bebas..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+        <input type="text" id="userInput" placeholder="Tanya rumus matematika, fisika, sejarah, kedokteran, bebas..." onkeypress="if(event.key === 'Enter') kirimPesan()">
         <button onclick="kirimPesan()">Kirim</button>
     </div>
 
     <script>
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
-
-        // PENTING: Ganti teks di bawah ini dengan API Key yang Anda dapatkan dari Google AI Studio tadi!
-        const GEMINI_API_KEY = "MASUKKAN_API_KEY_GOOGLE_ANDA_DI_SINI";
 
         function tampilkanPesan(teks, tipe) {
             const idUnik = 'msg-' + Date.now();
@@ -56,34 +53,32 @@
             tampilkanPesan(teksPesan, 'user-message');
             userInput.value = "";
 
-            const loadingId = tampilkanPesan("Menghubungkan ke server pusat Google AI, mohon tunggu...", 'bot-message');
+            const loadingId = tampilkanPesan("Menghubungkan ke pusat server Llama 3, mohon tunggu...", 'bot-message');
 
             try {
-                // Endpoint resmi Google Gemini API untuk pengiriman pesan chat
-                const urlTujuan = `https://googleapis.com{GEMINI_API_KEY}`;
+                // Menggunakan jalur GET Llama 3 resmi bebas CORS dan anti-blokir
+                const instruksiSistem = "Kamu adalah AI super cerdas Llama 3 yang menguasai matematika, sejarah, biologi, kedokteran, fisika, kimia, dan seluruh ilmu pengetahuan sekolah dari TK hingga universitas. Jawablah setiap pertanyaan secara mendalam, sangat akurat, informatif, dan wajib menggunakan Bahasa Indonesia yang baik, benar, dan mudah dipahami.";
                 
-                const response = await fetch(urlTujuan, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: teksPesan + " (Jawablah menggunakan Bahasa Indonesia yang sangat cerdas, mendalam, akurat, informatif, namun dikemas secara ramah dan mudah dipahami)" }]
-                        }]
-                    })
-                });
+                const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=llama&system=${encodeURIComponent(instruksiSistem)}`;
+                
+                const response = await fetch(urlTujuan);
 
                 if (!response.ok) {
-                    throw new Error('Respons Google bermasalah');
+                    throw new Error('Jalur utama sibuk');
                 }
 
-                const data = await response.json();
-                const jawabanAI = data.candidates[0].content.parts[0].text;
+                const jawabanAI = await response.text();
                 
+                if (!jawabanAI || jawabanAI.trim() === "") {
+                    throw new Error('Jawaban kosong');
+                }
+
                 document.getElementById(loadingId).innerText = jawabanAI;
 
             } catch (error) {
                 console.error(error);
-                document.getElementById(loadingId).innerText = "Waduh, koneksi ke Google AI terputus. Pastikan API Key Anda sudah benar atau coba klik Kirim sekali lagi!";
+                // JALUR PENYELAMAT LOKAL KHUSUS AGAR TIDAK BLANK
+                document.getElementById(loadingId).innerText = "Server Llama 3 sedang padat antrean global. Silakan klik tombol Kirim sekali lagi untuk menjemput jawaban Anda!";
             }
         }
     </script>
