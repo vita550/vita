@@ -23,11 +23,11 @@
     <div class="header">🔮 MyAI Center (Otak Jagat Raya Online)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo! Selamat datang di MyAI Center. Server kecerdasan saya telah ditingkatkan ke server utama yang jauh lebih stabil. Silakan ajukan pertanyaan umum, tugas sekolah, nama presiden, atau hitungan matematika di bawah ini!</div>
+        <div class="message bot-message">Halo boss besar! Website ini sekarang terhubung ke kluster server AI tingkat lanjut yang bebas CORS. Saya siap menjawab SEMUA ilmu pengetahuan: Matematika tingkat lanjut, Fisika, Kimia, Biologi, Sejarah, hingga materi kuliah dan umum. Silakan uji kecerdasan saya dengan pertanyaan apa saja!</div>
     </div>
 
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="Tulis pertanyaan, nama presiden, atau apa saja di sini..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+        <input type="text" id="userInput" placeholder="Tanya rumus kalkulus, sejarah dunia, ilmu kedokteran, bebas..." onkeypress="if(event.key === 'Enter') kirimPesan()">
         <button onclick="kirimPesan()">Kirim</button>
     </div>
 
@@ -53,53 +53,43 @@
             tampilkanPesan(teksPesan, 'user-message');
             userInput.value = "";
 
-            const loadingId = tampilkanPesan("Mohon tunggu sebentar, saya sedang memproses pertanyaan Anda...", 'bot-message');
+            const loadingId = tampilkanPesan("Menghubungkan ke jaringan otak super global, mohon tunggu...", 'bot-message');
 
-            // 1. Logika Kunci Otomatis untuk Pertanyaan Populer (Anti Gagal & Instan)
-            const teksBersih = teksPesan.toLowerCase().replace(/\s+/g, '');
-            if (teksBersih.includes("1+1")) {
-                setTimeout(() => { document.getElementById(loadingId).innerText = "Hasil dari 1 + 1 adalah 2, boss besar!"; }, 500);
-                return;
-            }
-            if (teksBersih.includes("presidenri") || teksBersih.includes("namapresiden")) {
-                setTimeout(() => { document.getElementById(loadingId).innerText = "Presiden Republik Indonesia saat ini adalah Bapak Prabowo Subianto, yang menjabat bersama Wakil Presiden Gibran Rakabuming Raka sejak dilantik pada Oktober 2024."; }, 500);
-                return;
-            }
-            if (teksBersih === "halo" || teksBersih === "hai" || teksBersih === "p") {
-                setTimeout(() => { document.getElementById(loadingId).innerText = "Halo juga! Ada yang bisa saya bantu hari ini?"; }, 500);
-                return;
-            }
-
-            // 2. Jalur Utama Server AI Cadangan yang Lebih Responsif Bahasa Indonesia
             try {
-                // Menggunakan model alternatif 'mistral' atau 'llama' via jalur teks langsung yang lebih stabil
-                const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=mistral&system=Jawab+menggunakan+Bahasa+Indonesia+yang+jelas+dan+sopan`;
+                // Menggunakan model 'flux'/'llama' cluster terbaru via text gateway bebas blokir CORS 
+                const instruksiSistem = "Kamu adalah AI super cerdas setingkat Google yang menguasai matematika, sejarah, biologi, kedokteran, fisika, kimia, dan seluruh ilmu pengetahuan sekolah hingga universitas. Jawablah setiap pertanyaan secara mendalam, akurat, informatif, dan menggunakan Bahasa Indonesia yang baik dan jelas.";
+                
+                const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=llama&system=${encodeURIComponent(instruksiSistem)}`;
+                
                 const response = await fetch(urlTujuan);
 
                 if (!response.ok) {
-                    throw new Error('Server utama sibuk');
+                    throw new Error('Jalur utama sibuk');
                 }
 
                 const jawabanAI = await response.text();
+                
+                if (!jawabanAI || jawabanAI.trim() === "") {
+                    throw new Error('Jawaban kosong');
+                }
+
                 document.getElementById(loadingId).innerText = jawabanAI;
 
             } catch (error) {
                 console.error(error);
-                // 3. Jalur Penyelamat Terakhir (SimSimi API)
+                
+                // JALUR PENYELAMAT CADANGAN UTAMA (SUDAH DIUPGRADE KE KLUSTER MULTI-MODEL)
                 try {
-                    const responseAlt = await fetch("https://simsimi.vn", {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: `text=${encodeURIComponent(teksPesan)}&lc=id`
-                    });
-                    if (responseAlt.ok) {
-                        const dataAlt = await responseAlt.json();
-                        document.getElementById(loadingId).innerText = dataAlt.message || "Saya mengerti pertanyaan Anda, silakan ketik ulang secara lebih spesifik.";
+                    const urlCadangan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=mistral`;
+                    const resCadangan = await fetch(urlCadangan);
+                    if (resCadangan.ok) {
+                        const teksCadangan = await resCadangan.text();
+                        document.getElementById(loadingId).innerText = teksCadangan;
                         return;
                     }
-                } catch (err) {}
-                
-                document.getElementById(loadingId).innerText = "Maaf ya, server kecerdasan eksternal sedang penuh muatan. Silakan coba klik tombol Kirim sekali lagi!";
+                } catch (errAlt) {}
+
+                document.getElementById(loadingId).innerText = "Koneksi ke superkomputer terhambat. Silakan klik tombol Kirim sekali lagi untuk mencoba jalur alternatif otomatis!";
             }
         }
     </script>
