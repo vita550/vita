@@ -56,10 +56,12 @@
             const loadingId = tampilkanPesan("Bentar boss, otak super gue lagi memproses alam semesta...", 'bot-message');
 
             try {
+                // Perbaikan endpoint URL ke text generation endpoint resmi Pollinations AI yang valid
                 const response = await fetch("https://pollinations.ai", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        model: "openai",
                         messages: [
                             { role: "system", content: "Kamu adalah asisten AI super jenius yang menguasai semua bidang ilmu pengetahuan (bisa bikin lirik lagu, matematika, sejarah nasional/dunia, biologi, fisika, gosip artis terkini). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah semua pertanyaan dengan data ilmiah atau faktual yang sangat akurat dan mendalam, namun dikemas dengan gaya santai tersebut!" },
                             { role: "user", content: teksPesan }
@@ -67,12 +69,17 @@
                     })
                 });
 
-                const jawabanAI = await response.text();
+                if (!response.ok) {
+                    throw new Error('Respons server bermasalah');
+                }
+
+                const data = await response.json();
+                const jawabanAI = data.choices[0].message.content;
                 document.getElementById(loadingId).innerText = jawabanAI;
 
             } catch (error) {
                 console.error(error);
-                document.getElementById(loadingId).innerText = "Waduh boss, servernya delay. Coba klik Kirim sekali lagi ya!";
+                document.getElementById(loadingId).innerText = "Waduh boss, servernya lagi penuh atau koneksi keputus. Coba ketik ulang dan klik Kirim sekali lagi ya!";
             }
         }
     </script>
