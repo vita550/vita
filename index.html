@@ -23,7 +23,7 @@
     <div class="header">🔮 MyAI Center (Otak Jagat Raya Online)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Halo! Selamat datang di MyAI Center. Website Anda sekarang sudah diperbarui dengan sistem koneksi paling stabil. Saya adalah asisten AI yang siap menjawab apa saja, mulai dari matematika, tugas sekolah, hingga informasi umum. Silakan ajukan pertanyaan Anda!</div>
+        <div class="message bot-message">Halo! Selamat datang di MyAI Center. Sistem koneksi saya sudah diperbarui total. Silakan ajukan pertanyaan atau berikan saya tugas hitungan matematika apa saja di bawah ini!</div>
     </div>
 
     <div class="input-container">
@@ -56,13 +56,12 @@
             const loadingId = tampilkanPesan("Mohon tunggu sebentar, saya sedang memproses pertanyaan Anda...", 'bot-message');
 
             try {
-                // Menggunakan sistem URL langsung (GET) yang 100% anti-delay dan anti-blokir
+                // Menggunakan URL Get Langsung untuk bypass pembatasan keamanan CORS
                 const urlTujuan = `https://pollinations.ai{encodeURIComponent(teksPesan)}?model=openai`;
-                
                 const response = await fetch(urlTujuan);
 
                 if (!response.ok) {
-                    throw new Error('Respons server bermasalah');
+                    throw new Error('Server bermasalah');
                 }
 
                 const jawabanAI = await response.text();
