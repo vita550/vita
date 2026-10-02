@@ -20,14 +20,14 @@
 </head>
 <body>
 
-    <div class="header">🔮 MyAI Center (Otak Jagat Raya Mandiri V3)</div>
+    <div class="header">🔮 MyAI Center (Otak Jagat Raya Online)</div>
     
     <div class="chat-container" id="chatContainer">
-        <div class="message bot-message">Selamat datang boss besar di MyAI Center! Website ini sekarang ditenagai oleh Otak Core Engine Mandiri yang 100% anti-delay dan bebas gangguan server luar. Saya siap menjawab hitungan Matematika (rumus apa saja), Sejarah, Sains, dan materi sekolah. Silakan tes kecerdasan saya!</div>
+        <div class="message bot-message">Halo boss besar! Website lo sekarang udah online resmi di internet! Otak gue ditenagai superkomputer global. Gue tahu SEMUANYA: bisa bikin lirik lagu, tahu pelajaran SD sampai Kuliah, gosip artis, bebas lo todong. Dan gaya gue bakalan santai abis! Mau nanya apa kita?</div>
     </div>
 
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="Tulis hitungan matematika, rumus, pertanyaan sejarah/sains..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+        <input type="text" id="userInput" placeholder="Minta lirik lagu, tanya rumus, gosip artis, bebas..." onkeypress="if(event.key === 'Enter') kirimPesan()">
         <button onclick="kirimPesan()">Kirim</button>
     </div>
 
@@ -46,74 +46,34 @@
             return idUnik;
         }
 
-        function kirimPesan() {
+        async function kirimPesan() {
             const teksPesan = userInput.value.trim();
             if (teksPesan === "") return;
 
             tampilkanPesan(teksPesan, 'user-message');
             userInput.value = "";
 
-            const loadingId = tampilkanPesan("Mengakses core engine internal, memproses data...", 'bot-message');
-            const teksBersih = teksPesan.toLowerCase().replace(/\s+/g, '');
+            const loadingId = tampilkanPesan("Bentar boss, otak super gue lagi memproses alam semesta...", 'bot-message');
 
-            // ========================================================
-            // 1. MESIN KALKULUS MANDIRI (BISA HITUNG SEMUA ANGKA DI DUNIA)
-            // ========================================================
-            let rumusMatematika = teksPesan.toLowerCase()
-                .replace(/x/g, '*').replace(/:/g, '/').replace(/kali/g, '*')
-                .replace(/bagi/g, '/').replace(/tambah/g, '+').replace(/kurang/g, '-');
-            
-            // Bersihkan teks agar tersisa hanya angka dan operator matematika
-            let hanyaAngkaDanSimbol = rumusMatematika.replace(/[^0-9+\-*/().]/g, '');
+            try {
+                const response = await fetch("https://pollinations.ai", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: "system", content: "Kamu adalah asisten AI super jenius yang menguasai semua bidang ilmu pengetahuan (bisa bikin lirik lagu, matematika, sejarah nasional/dunia, biologi, fisika, gosip artis terkini). Kamu sangat kocak, gaul, dan suka memakai bahasa anak Jakarta Selatan (Gue-Elo, jujurly, literally). Jawablah semua pertanyaan dengan data ilmiah atau faktual yang sangat akurat dan mendalam, namun dikemas dengan gaya bahasa santai tersebut!" },
+                            { role: "user", content: teksPesan }
+                        ]
+                    })
+                });
 
-            if (/\d/.test(hanyaAngkaDanSimbol) && hanyaAngkaDanSimbol.trim().length >= 3) {
-                try {
-                    // Menghitung otomatis secara instan tanpa internet server luar
-                    const hasil = Function(`"use strict"; return (${hanyaAngkaDanSimbol})`)();
-                    setTimeout(() => {
-                        document.getElementById(loadingId).innerText = `Hasil matematika dari "${teksPesan}" adalah: ${hasil}.\n\n(Dihitung secara instan 0.2 detik oleh Mesin Kalkulus Internal).`;
-                    }, 300);
-                    return;
-                } catch (e) {}
-            }
+                const jawabanAI = await response.text();
+                document.getElementById(loadingId).innerText = jawabanAI;
 
-            // ========================================================
-            // 2. ENSIKLOPEDIA SEJARAH & UMUM MANDIRI
-            // ========================================================
-            if (teksBersih.includes("presiden") || teksBersih.includes("prabowo")) {
-                setTimeout(() => {
-                    document.getElementById(loadingId).innerText = "Presiden Republik Indonesia saat ini adalah Bapak Prabowo Subianto, didampingi oleh Wakil Presiden Gibran Rakabuming Raka sejak dilantik pada Oktober 2024.";
-                }, 300);
-                return;
+            } catch (error) {
+                console.error(error);
+                document.getElementById(loadingId).innerText = "Waduh boss, servernya delay. Coba klik Kirim sekali lagi ya!";
             }
-            if (teksBersih.includes("indonesia") && teksBersih.includes("merdeka")) {
-                setTimeout(() => {
-                    document.getElementById(loadingId).innerText = "Indonesia merdeka pada tanggal 17 Agustus 1945, diproklamasikan oleh Ir. Soekarno dan Drs. Mohammad Hatta di Jalan Pegangsaan Timur No. 56, Jakarta.";
-                }, 300);
-                return;
-            }
-            if (teksBersih === "halo" || teksBersih === "hai" || teksBersih === "p") {
-                setTimeout(() => {
-                    document.getElementById(loadingId).innerText = "Halo juga boss besar! Ada tugas sekolah, hitungan matematika rumit, atau pertanyaan sains yang bisa saya bantu hari ini?";
-                }, 300);
-                return;
-            }
-
-            // ========================================================
-            // 3. RESPONS SAINS & AKADEMIK PINTAR (JALUR MANDIRI)
-            // ========================================================
-            setTimeout(() => {
-                let jawabanBypass = `[Analisis AI Mandiri]: Pertanyaan Anda mengenai "${teksPesan}" berhasil dianalisis.\n\nKarena kluster server eksternal global saat ini sedang offline massal, modul kecerdasan lokal MyAI Center mendeteksi materi ini aman. Fungsi hitung matematika semua angka dan data kenegaraan tetap aktif 100% tanpa delay!`;
-                
-                // Tambahan info otomatis untuk pelajaran sekolah
-                if (teksBersih.includes("biologi") || teksBersih.includes("sel") || teksBersih.includes("hewan")) {
-                    jawabanBypass += "\n\n💡 Info Biologi: Sel adalah unit struktural dan fungsional terkecil dari makhluk hidup.";
-                } else if (teksBersih.includes("fisika") || teksBersih.includes("gaya") || teksBersih.includes("gravitasi")) {
-                    jawabanBypass += "\n\n💡 Info Fisika: Hukum Gravitasi Newton menyatakan bahwa setiap massa menarik massa lain dengan gaya segaris.";
-                }
-                
-                document.getElementById(loadingId).innerText = jawabanBypass;
-            }, 400);
         }
     </script>
 </body>
